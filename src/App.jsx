@@ -51,19 +51,19 @@ function App() {
   };
   const deleteItem = (id) => {
     if (window.confirm("Are you sure yo want to delete this entry ?")) {
-      const filteredList = taskList.filter((item) => item.id !== id);
-      setTaskList(filteredList);
+      setTaskList(taskList.filter((item) => item.id !== id));
     }
   };
 
   const switchTask = (id, type) => {
-    const updatedList = taskList.map((item) => {
-      if (item.id === id) {
-        return { ...item, type: type };
-      }
-      return item;
-    });
-    setTaskList(updatedList);
+    setTaskList(
+      taskList.map((item) => {
+        if (item.id === id) {
+          return { ...item, type: type };
+        }
+        return item;
+      }),
+    );
   };
 
   return (
