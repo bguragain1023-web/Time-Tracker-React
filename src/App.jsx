@@ -2,17 +2,20 @@ import "./App.css";
 import { useState } from "react";
 import { Form } from "./Form";
 import { Table } from "./Table";
-import { TotalHour } from "./TotalHour";
+
+import { Footer } from "./Footer";
 
 function App() {
   const [taskList, setTaskList] = useState([]);
+  const [totalBadHrs, setTotalBadHour] = useState(null)
+   
   const hourPerWeek = 168;
 
   const totalHours = taskList.reduce((acc, item) => {
     return acc + item.hour;
   }, 0);
 
-  const randomId = (length = 6) => {
+  const randomId = () => {
     const str =
       "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
     let id = "";
@@ -46,6 +49,7 @@ function App() {
     }
 
     setTaskList([...taskList, entryData]);
+   
 
     console.log(taskList);
   };
@@ -61,6 +65,7 @@ function App() {
         if (item.id === id) {
           return { ...item, type: type };
         }
+        if (taskList.length == 0); 
         return item;
       }),
     );
@@ -68,13 +73,14 @@ function App() {
 
   return (
     <>
-      <Form handleOnSubmit={handleOnSubmit} />
+      <Form handleOnSubmit={handleOnSubmit} totalHours ={totalHours} totalBadHrs={totalBadHrs}/>
       <Table
         taskList={taskList}
         deleteItem={deleteItem}
         switchTask={switchTask}
+        setTotalBadHour ={setTotalBadHour}
       />
-      <TotalHour ttlHours={totalHours} />
+     <Footer/>
     </>
   );
 }

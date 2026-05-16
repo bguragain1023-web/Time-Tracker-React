@@ -1,20 +1,37 @@
-import React from "react";
-export const Table = ({ taskList, deleteItem, switchTask }) => {
+import React  from "react";
+export const Table = ({ taskList, deleteItem, switchTask, setTotalBadHour}) => {
+ 
+ 
   const entryList = taskList.filter((item) => item.type == "entry");
 
   const badList = taskList.filter((item) => item.type == "bad");
   const totalBadHrs = badList.reduce((acc, item) => acc + item.hour, 0);
+setTotalBadHour(totalBadHrs);
+  const isEntryEmpty = entryList.length === 0;
+  const isBadEmpty = badList.length===0;
+
+  
   return (
     <>
-      <div className="row mt-5">
+      <div className="row mt-5 border m-2">
         <div className="col-md">
-          <h3 className="text-center">Entry list</h3>
-          <hr />
+     
+             {/* <!-- entry list  --> */}
+          <div className="table-box border ">
+            <div className="box-nav d-flex justify-content-between ">
+              <div className="box-title text-success">Entry list</div>
+              <div className="entry-count text-success"> Task: <strong>{entryList.length}</strong> </div>
 
-          {/* <!-- entry list  --> */}
-          <table className="table table-striped table-hover border">
+            </div>
+            <hr />
+
+            { isEntryEmpty ? <div className="empty-entry"> No task list added</div> 
+            
+            :
+            <table className="table table-striped table-hover border">
+
             <tbody>
-              {entryList.map((item, i) => (
+          {entryList.map((item, i) => (
                 <tr key={item.id}>
                   <td>{i + 1}</td>
                   <td>{item.task}</td>
@@ -35,15 +52,36 @@ export const Table = ({ taskList, deleteItem, switchTask }) => {
                   </td>
                 </tr>
               ))}
+      
+             
             </tbody>
           </table>
+
+
+
+            }
+
+ 
+          </div>
+
+       
+          {/* <!-- Bad list  --> */}
         </div>
         <div className="col-md">
-          <h3 className="text-center">Bad list</h3>
-          <hr />
+    
 
-          {/* <!-- Bad list  --> */}
-          <table className="table table-striped table-hover border">
+          <div className="table-box border">
+              <div className="box-nav d-flex justify-content-between">
+              <div className="box-title text-danger">Bad list</div>
+              <div className="entry-count text-danger"> Task: <strong>{badList.length}</strong> </div>
+
+            </div>
+            <hr />
+
+{isBadEmpty ? <div className="empty-entry "> No  Bad entry added</div> 
+:
+
+  <table className="table table-striped table-hover border">
             <tbody>
               {badList.map((item, i) => (
                 <tr key={item.id}>
@@ -69,10 +107,15 @@ export const Table = ({ taskList, deleteItem, switchTask }) => {
               ))}
             </tbody>
           </table>
+}
 
-          <div className="alert alert-success">
-            You could have save = {totalBadHrs}hours
+
           </div>
+
+         
+        
+
+       
         </div>
       </div>
     </>
