@@ -4,11 +4,12 @@ import { Form } from "./Form";
 import { Table } from "./Table";
 
 import { Footer } from "./Footer";
+import { postTask } from "./helpers/axiosHelper";
 
 function App() {
   const [taskList, setTaskList] = useState([]);
-  const [totalBadHrs, setTotalBadHour] = useState(null)
-   
+  const [totalBadHrs, setTotalBadHour] = useState(null);
+
   const hourPerWeek = 168;
 
   const totalHours = taskList.reduce((acc, item) => {
@@ -24,6 +25,7 @@ function App() {
 
       id += str[randomIndex];
     }
+
     return id;
   };
 
@@ -49,7 +51,10 @@ function App() {
     }
 
     setTaskList([...taskList, entryData]);
-   
+
+    //call api to send data in database
+
+    const response = postTask(entryData);
 
     console.log(taskList);
   };
@@ -65,7 +70,7 @@ function App() {
         if (item.id === id) {
           return { ...item, type: type };
         }
-        if (taskList.length == 0); 
+        if (taskList.length == 0);
         return item;
       }),
     );
@@ -73,14 +78,20 @@ function App() {
 
   return (
     <>
-      <Form handleOnSubmit={handleOnSubmit} totalHours ={totalHours} totalBadHrs={totalBadHrs}/>
-      <Table
-        taskList={taskList}
-        deleteItem={deleteItem}
-        switchTask={switchTask}
-        setTotalBadHour ={setTotalBadHour}
-      />
-     <Footer/>
+      <div className="wrapper">
+        <Form
+          handleOnSubmit={handleOnSubmit}
+          totalHours={totalHours}
+          totalBadHrs={totalBadHrs}
+        />
+        <Table
+          taskList={taskList}
+          deleteItem={deleteItem}
+          switchTask={switchTask}
+          setTotalBadHour={setTotalBadHour}
+        />
+        <Footer />
+      </div>
     </>
   );
 }
