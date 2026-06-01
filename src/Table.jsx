@@ -1,15 +1,8 @@
 import React from "react";
-export const Table = ({
-  taskList,
-  deleteItem,
-  switchTask,
-  setTotalBadHour,
-}) => {
+export const Table = ({ taskList, deleteItem, switchTask }) => {
   const entryList = taskList.filter((item) => item.type == "entry");
 
   const badList = taskList.filter((item) => item.type == "bad");
-  const totalBadHrs = badList.reduce((acc, item) => acc + item.hour, 0);
-  setTotalBadHour(totalBadHrs);
   const isEntryEmpty = entryList.length === 0;
   const isBadEmpty = badList.length === 0;
 
@@ -37,7 +30,7 @@ export const Table = ({
                     <tr key={item.id}>
                       <td>{i + 1}</td>
                       <td>{item.task}</td>
-                      <td>{item.hour}</td>
+                      <td>{item.hr}</td>
                       <td className="text-end">
                         <button
                           onClick={() => deleteItem(item.id)}
@@ -81,7 +74,7 @@ export const Table = ({
                     <tr key={item.id}>
                       <td>{i + 1}</td>
                       <td>{item.task}</td>
-                      <td>{item.hour}</td>
+                      <td>{item.hr}</td>
                       <td className="text-end">
                         <button
                           onClick={() => switchTask(item.id, "entry")}

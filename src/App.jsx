@@ -8,13 +8,29 @@ import { postTask } from "./helpers/axiosHelper";
 
 function App() {
   const [taskList, setTaskList] = useState([]);
-  const [totalBadHrs, setTotalBadHour] = useState(null);
+  const [resp, setResp] = useState({});
 
   const hourPerWeek = 168;
-
-  const totalHours = taskList.reduce((acc, item) => {
-    return acc + item.hour;
+  const ttlHours = taskList.reduce((acc, item) => {
+    return acc + item.hr;
   }, 0);
+
+  const totalBadHours = taskList
+    .filter((item) => item.type === "bad")
+    .reduce((acc, item) => acc + item.hr, 0);
+
+  const addTaskList = async (taskObj) => {
+    // if (!taskObj.task || !taskObj.hr)
+    //   return alert("Both input fields are required");
+
+    // // if (ttlHours + taskObj.hr > hourPerWeek) {
+    // //   return alert("Number of hour per weeek exceeded");
+    // // }
+    // setTaskList([...taskList, obj]);
+
+    const response = await postTask(taskObj);
+    setResp(response);
+  };
 
   const randomId = () => {
     const str =
@@ -29,35 +45,6 @@ function App() {
     return id;
   };
 
-  const handleOnSubmit = (e) => {
-    e.preventDefault();
-    const newForm = new FormData(e.target);
-
-    const task = newForm.get("task");
-    const hour = +newForm.get("hr");
-
-    const entryData = {
-      task: task,
-      hour: hour,
-      type: "entry",
-      id: randomId(),
-    };
-    if (task == "" || hour == "") {
-      return alert("Both of the input fields are required");
-    }
-
-    if (totalHours + hour > hourPerWeek) {
-      return alert("Number of hour per weeek exceeded");
-    }
-
-    setTaskList([...taskList, entryData]);
-
-    //call api to send data in database
-
-    const response = postTask(entryData);
-
-    console.log(taskList);
-  };
   const deleteItem = (id) => {
     if (window.confirm("Are you sure yo want to delete this entry ?")) {
       setTaskList(taskList.filter((item) => item.id !== id));
@@ -80,15 +67,26 @@ function App() {
     <>
       <div className="wrapper">
         <Form
-          handleOnSubmit={handleOnSubmit}
-          totalHours={totalHours}
-          totalBadHrs={totalBadHrs}
+          addTaskList={addTaskList}
+          ttlHours={ttlHours}
+          totalBadHours={totalBadHours}
         />
+        {resp.message && (
+          <div
+            className={
+              resp?.status === "success"
+                ? "alert alert-success  mt-3 container"
+                : "alert alert-danger  mt-3 container "
+            }
+          >
+            {resp?.message}
+          </div>
+        )}
+
         <Table
           taskList={taskList}
           deleteItem={deleteItem}
           switchTask={switchTask}
-          setTotalBadHour={setTotalBadHour}
         />
         <Footer />
       </div>
