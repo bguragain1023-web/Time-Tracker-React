@@ -4,12 +4,7 @@ import { Form } from "./Form";
 import { Table } from "./Table";
 
 import { Footer } from "./Footer";
-import {
-  postTask,
-  fetchAllTasks,
-  updateTask,
-  deleteTask,
-} from "./helpers/axiosHelper";
+import { postTask, fetchAllTasks, updateTask } from "./helpers/axiosHelper";
 
 function App() {
   const [taskList, setTaskList] = useState([]);
@@ -35,45 +30,22 @@ function App() {
     // // if (ttlHours + taskObj.hr > hourPerWeek) {
     // //   return alert("Number of hour per weeek exceeded");
     // // }
-    // setTaskList([...taskList, obj]);
 
     const response = await postTask(taskObj);
     setResp(response);
-  };
-
-  const randomId = () => {
-    const str =
-      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-    let id = "";
-    for (let i = 0; i < 6; i++) {
-      const randomIndex = Math.floor(Math.random() * str.length);
-
-      id += str[randomIndex];
-    }
-
-    return id;
-  };
-
-  const deleteItem = async (_id) => {
-    if (window.confirm("Are you sure yo want to delete this entry ?")) {
-      // setTaskList(taskList.filter((item) => item.id !== id));
-      const response = await deleteTask({ _id });
-      setResp(response);
-      //refetch again
+    if (response.status === "success") {
+      // refetch all the data
       getAllTask();
     }
   };
 
+  // const deleteItem = async (_id) => {
+  //   if (window.confirm("Are you sure yo want to delete this entry ?")) {
+  //     //delete to do
+  //   }
+  // };
+
   const switchTask = async (_id, type) => {
-    // setTaskList(
-    //   taskList.map((item) => {
-    //     if (item.id === id) {
-    //       return { ...item, type: type };
-    //     }
-    //     if (taskList.length == 0);
-    //     return item;
-    //   }),
-    // );
     const response = await updateTask({ _id, type });
     setResp(response);
     if (response.status === "success") {
@@ -85,7 +57,6 @@ function App() {
   const getAllTask = async () => {
     //call axios to get all data from sever
     const data = await fetchAllTasks();
-    console.log(data);
 
     // mount tat data to our tasklist
     data?.status === "success" && setTaskList(data.tasks);
@@ -112,7 +83,7 @@ function App() {
 
         <Table
           taskList={taskList}
-          deleteItem={deleteItem}
+          // deleteItem={deleteItem}
           switchTask={switchTask}
         />
         <Footer />

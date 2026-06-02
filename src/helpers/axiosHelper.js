@@ -2,11 +2,15 @@ import axios from "axios"
 
 const apiEp = "http://localhost:8000/api/v1/tasks"
 
-export const postTask = async(data)=>{
+const apiProcssor = async ({method, data})=>{
     try {
-        const response = await axios.post(apiEp, data);
-        console.log(response);
+        const response = await axios({
+            method,
+            url:apiEp,
+            data,
+        })
         return response.data;
+        
     } catch (error) {
         return{
             status: "error",
@@ -16,36 +20,29 @@ export const postTask = async(data)=>{
     }
 }
 
+
+
+export const postTask = async(data)=>{
+  const obj = {
+    method: "post",
+    data,
+  };
+  return apiProcssor(obj);
+}
+
 export const fetchAllTasks = async () =>{
-    try {
-        const response = await axios.get(apiEp)
-        return response.data
-        
-    } catch (error) {
-
-         return{
-            status: "error",
-            message:error.message
-         }
-
-        
-    }
+  const obj = {
+    method: "get"
+  };
+  return apiProcssor(obj);
 }
 
 export const updateTask = async (data) =>{
-    try {
-        const response = await axios.patch(apiEp, data);
-        return response.data
-        
-    } catch (error) {
-
-         return{
-            status: "error",
-            message:error.message
-         }
-
-        
-    }
+    const obj = {
+    method: "patch",
+    data,
+  };
+  return apiProcssor(obj);
 }
 
 // export const deleteTask = async(data)=>{
