@@ -39,11 +39,12 @@ function App() {
     }
   };
 
-  // const deleteItem = async (_id) => {
-  //   if (window.confirm("Are you sure yo want to delete this entry ?")) {
-  //     //delete to do
-  //   }
-  // };
+  const handleOndelete = async (idsToDelete) => {
+    if (window.confirm("Are you sure yo want to delete this entry ?")) {
+      //delete to do
+      console.log(idsToDelete);
+    }
+  };
 
   const switchTask = async (_id, type) => {
     const response = await updateTask({ _id, type });
@@ -83,7 +84,7 @@ function App() {
 
         <Table
           taskList={taskList}
-          // deleteItem={deleteItem}
+          handleOndelete={handleOndelete}
           switchTask={switchTask}
         />
         <Footer />

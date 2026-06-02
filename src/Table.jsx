@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-export const Table = ({ taskList, deleteItem, switchTask }) => {
+export const Table = ({ taskList, handleOndelete, switchTask }) => {
   const entryList = taskList.filter((item) => item.type == "entry");
 
   const [toDelete, setToDelete] = useState([]);
@@ -10,17 +10,28 @@ export const Table = ({ taskList, deleteItem, switchTask }) => {
 
   const handleOnSelect = (e) => {
     const { checked, value } = e.target;
+    let tempArg = [];
+    if (value === "allEntry") {
+      tempArg = entryList;
+    }
+
+    if (value === "allBadList") {
+      tempArg = badList;
+    }
+
     if (checked) {
-      if (value === "allEntry") {
+      if (value === "allEntry" || value === "allBadList") {
         //get all value from entry list
-        const _ids = entryList.map((item) => item._id);
-        setToDelete([...toDelete, ..._ids]);
+        const _ids = tempArg.map((item) => item._id);
+        const uniqueIds = [...new Set([...toDelete, ..._ids])];
+        setToDelete(uniqueIds);
         return;
       }
+
       setToDelete([...toDelete, value]);
     } else {
-      if (value === "allEntry") {
-        const _ids = entryList.map((item) => item._id);
+      if (value === "allEntry" || value === "allBadList") {
+        const _ids = tempArg.map((item) => item._id);
         setToDelete(toDelete.filter((_id) => !_ids.includes(_id)));
         return;
       }
@@ -74,12 +85,6 @@ export const Table = ({ taskList, deleteItem, switchTask }) => {
                       <td>{item.task}</td>
                       <td>{item.hr}</td>
                       <td className="text-end">
-                        <button
-                          onClick={() => deleteItem(item._id)}
-                          className="btn btn-danger"
-                        >
-                          <i className="fa-solid fa-trash"></i>
-                        </button>
                         <button
                           onClick={() => switchTask(item._id, "bad")}
                           className="btn btn-success"
@@ -142,13 +147,6 @@ export const Table = ({ taskList, deleteItem, switchTask }) => {
                         >
                           <i className="fa-solid fa-arrow-left"></i>
                         </button>
-
-                        <button
-                          onClick={() => deleteItem(item.id)}
-                          className="btn btn-danger"
-                        >
-                          <i className="fa-solid fa-trash"></i>
-                        </button>
                       </td>
                     </tr>
                   ))}
@@ -158,6 +156,17 @@ export const Table = ({ taskList, deleteItem, switchTask }) => {
           </div>
         </div>
       </div>
+
+      {toDelete.length > 0 && (
+        <div className=" container p-3 d-grid mt-4 my-3">
+          <button
+            className="btn btn-danger"
+            onClick={() => handleOndelete(toDelete)}
+          >
+            Delete {toDelete.length} Tasks{" "}
+          </button>
+        </div>
+      )}
     </>
   );
 };
