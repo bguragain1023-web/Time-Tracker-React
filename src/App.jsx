@@ -4,13 +4,26 @@ import { Form } from "./Form";
 import { Table } from "./Table";
 
 import { Footer } from "./Footer";
-import { postTask, fetchAllTasks, updateTask } from "./helpers/axiosHelper";
+import {
+  postTask,
+  fetchAllTasks,
+  updateTask,
+  deleteTask,
+} from "./helpers/axiosHelper";
 
 function App() {
+  //states
   const [taskList, setTaskList] = useState([]);
   const [resp, setResp] = useState({});
+  const [toDelete, setToDelete] = useState([]);
 
+  //varibales
+  const entryList = taskList.filter((item) => item.type == "entry");
+  const badList = taskList.filter((item) => item.type == "bad");
+  const isEntryEmpty = entryList.length === 0;
+  const isBadEmpty = badList.length === 0;
   const hourPerWeek = 168;
+
   const ttlHours = taskList.reduce((acc, item) => {
     return acc + item.hr;
   }, 0);
@@ -24,12 +37,9 @@ function App() {
   }, []);
 
   const addTaskList = async (taskObj) => {
-    // if (!taskObj.task || !taskObj.hr)
-    //   return alert("Both input fields are required");
-
-    // // if (ttlHours + taskObj.hr > hourPerWeek) {
-    // //   return alert("Number of hour per weeek exceeded");
-    // // }
+    if (ttlHours + taskObj.hr > hourPerWeek) {
+      return alert("Number of hour per weeek exceeded");
+    }
 
     const response = await postTask(taskObj);
     setResp(response);
@@ -42,7 +52,14 @@ function App() {
   const handleOndelete = async (idsToDelete) => {
     if (window.confirm("Are you sure yo want to delete this entry ?")) {
       //delete to do
-      console.log(idsToDelete);
+      const response = await deleteTask(idsToDelete);
+      setResp(response);
+
+      if (response.status === "success") {
+        getAllTask();
+        //empty the todelete array
+        setToDelete([]);
+      }
     }
   };
 
@@ -62,6 +79,39 @@ function App() {
     // mount tat data to our tasklist
     data?.status === "success" && setTaskList(data.tasks);
   };
+
+  const handleOnSelect = (e) => {
+    const { checked, value } = e.target;
+    let tempArg = [];
+    if (value === "allEntry") {
+      tempArg = entryList;
+    }
+
+    if (value === "allBadList") {
+      tempArg = badList;
+    }
+
+    if (checked) {
+      if (value === "allEntry" || value === "allBadList") {
+        //get all value from entry list
+        const _ids = tempArg.map((item) => item._id);
+        const uniqueIds = [...new Set([...toDelete, ..._ids])];
+        setToDelete(uniqueIds);
+        return;
+      }
+
+      setToDelete([...toDelete, value]);
+    } else {
+      if (value === "allEntry" || value === "allBadList") {
+        const _ids = tempArg.map((item) => item._id);
+        setToDelete(toDelete.filter((_id) => !_ids.includes(_id)));
+        return;
+      }
+
+      setToDelete(toDelete.filter((_id) => _id !== value));
+    }
+  };
+
   return (
     <>
       <div className="wrapper">
@@ -83,9 +133,14 @@ function App() {
         )}
 
         <Table
-          taskList={taskList}
           handleOndelete={handleOndelete}
           switchTask={switchTask}
+          toDelete={toDelete}
+          entryList={entryList}
+          badList={badList}
+          isEntryEmpty={isEntryEmpty}
+          isBadEmpty={isBadEmpty}
+          handleOnSelect={handleOnSelect}
         />
         <Footer />
       </div>

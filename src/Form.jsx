@@ -46,6 +46,7 @@ export const Form = ({ ttlHours, totalBadHours, addTaskList }) => {
                 name="task"
                 id="task"
                 onChange={handleOnChange}
+                required
               />
             </div>
             <div className="col-md-2">
@@ -55,9 +56,11 @@ export const Form = ({ ttlHours, totalBadHours, addTaskList }) => {
                 placeholder="40"
                 aria-label="hr"
                 min="1"
+                max="100"
                 name="hr"
                 id="hr"
                 onChange={handleOnChange}
+                required
               />
             </div>
 

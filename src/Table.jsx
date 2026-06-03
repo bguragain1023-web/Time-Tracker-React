@@ -1,45 +1,13 @@
-import React, { useState } from "react";
-export const Table = ({ taskList, handleOndelete, switchTask }) => {
-  const entryList = taskList.filter((item) => item.type == "entry");
-
-  const [toDelete, setToDelete] = useState([]);
-
-  const badList = taskList.filter((item) => item.type == "bad");
-  const isEntryEmpty = entryList.length === 0;
-  const isBadEmpty = badList.length === 0;
-
-  const handleOnSelect = (e) => {
-    const { checked, value } = e.target;
-    let tempArg = [];
-    if (value === "allEntry") {
-      tempArg = entryList;
-    }
-
-    if (value === "allBadList") {
-      tempArg = badList;
-    }
-
-    if (checked) {
-      if (value === "allEntry" || value === "allBadList") {
-        //get all value from entry list
-        const _ids = tempArg.map((item) => item._id);
-        const uniqueIds = [...new Set([...toDelete, ..._ids])];
-        setToDelete(uniqueIds);
-        return;
-      }
-
-      setToDelete([...toDelete, value]);
-    } else {
-      if (value === "allEntry" || value === "allBadList") {
-        const _ids = tempArg.map((item) => item._id);
-        setToDelete(toDelete.filter((_id) => !_ids.includes(_id)));
-        return;
-      }
-
-      setToDelete(toDelete.filter((_id) => _id !== value));
-    }
-  };
-  console.log(toDelete);
+export const Table = ({
+  entryList,
+  handleOndelete,
+  switchTask,
+  isBadEmpty,
+  isEntryEmpty,
+  handleOnSelect,
+  badList,
+  toDelete,
+}) => {
   return (
     <>
       <div className="row mt-5 border m-2 table-edit">
@@ -60,6 +28,10 @@ export const Table = ({ taskList, handleOndelete, switchTask }) => {
               value="allEntry"
               id="all-entry"
               onChange={handleOnSelect}
+              checked={
+                entryList.length > 0 &&
+                entryList.every((item) => toDelete.includes(item._id))
+              }
             />
             {"  "}
             <label htmlFor="all-entry">Select All</label>
@@ -117,6 +89,10 @@ export const Table = ({ taskList, handleOndelete, switchTask }) => {
               value="allBadList"
               id="all-bad"
               onChange={handleOnSelect}
+              checked={
+                badList.length > 0 &&
+                badList.every((item) => toDelete.includes(item._id))
+              }
             />
             {"  "}
             <label htmlFor="all-bad">Select All</label>

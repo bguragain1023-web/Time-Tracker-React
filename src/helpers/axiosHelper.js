@@ -45,14 +45,10 @@ export const updateTask = async (data) =>{
   return apiProcssor(obj);
 }
 
-// export const deleteTask = async(data)=>{
-//     try {
-//         const response = await axios.delete(apiEp+`/:_id`, data)
-//         return response.data;
-//     } catch (error) {
-//         return{
-//             status: "error",
-//             message:error.message
-//          }
-//     }
-// }
+export const deleteTask = async(data)=>{
+   const obj = {
+    method: "delete",
+    data,
+  };
+  return apiProcssor(obj);
+}
