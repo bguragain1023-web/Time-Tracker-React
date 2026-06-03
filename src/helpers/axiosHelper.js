@@ -1,6 +1,8 @@
 import axios from "axios"
 
-const apiEp = "http://localhost:8000/api/v1/tasks"
+const apiEp = import.meta.env.NODE_ENV ? 
+"/api/v1/tasks"
+: "http://localhost:8000/api/v1/tasks"
 
 const apiProcssor = async ({method, data})=>{
     try {
